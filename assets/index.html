@@ -1,0 +1,11 @@
+{{define "content"}}
+    {{range .}}
+    <tr>
+        <td>
+            <a href="/{{.Slug}}">{{.Title}}</a>
+            <br>
+            on {{.Created.Format "2006-01-02 15:04:05"}} by {{.AuthorName}}
+        </td>
+    </tr>
+    {{end}}
+{{end}}

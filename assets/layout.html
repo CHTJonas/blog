@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+        <meta name="description" content="{{.Description}}">
+        <meta name="author" content="{{.Author}}">
+        <link rel="stylesheet" href="/static/layout.css">
+        <link href="/rss.xml" rel="feed" type="application/rss+xml" title="{{.Title}}">
+        <title>{{.Title}}</title>
+    </head>
+    <body>
+        <table>
+            <thead>
+                <tr>
+                    <th>
+                        <div style="flex-grow: 1;">
+                            <a href="/">{{.Title}}</a>
+                        </div>
+                        <div>
+                            <a href="https://github.com/CHTJonas/blog">Code</a>
+                            &vert;
+                            <a href="/rss.xml">RSS</a>
+                        </div>
+                    </th>
+                </tr>
+            </thead>
+            {{template "content" .ContentData}}
+        </table>
+    </body>
+</html>

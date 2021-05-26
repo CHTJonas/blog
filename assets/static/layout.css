@@ -1,0 +1,22 @@
+html {
+    font-family: Verdana, sans-serif;
+}
+
+body {
+    margin: 0 auto 0 auto;
+    padding: 0.5em 0 1em 0;
+    max-width: 88%;
+    background-color: rgb(245, 245, 245);
+}
+
+table {
+    width: 100%;
+    border-spacing: 1em;
+    background-color: rgb(255, 255, 225);
+}
+
+th {
+    padding-bottom: 1em;
+    text-align: left;
+    display: flex;
+}

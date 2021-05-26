@@ -1,0 +1,15 @@
+{{define "content"}}
+    <tr>
+        <td>
+            {{.Title}} by {{.AuthorName}}.
+            <br>
+            Published on {{.Created.Format "2006-01-02 15:04:05"}}.
+            Updated on {{.Updated.Format "2006-01-02 15:04:05"}}.
+        </td>
+    </tr>
+    <tr>
+        <td>
+            {{.GetHTML}}
+        </td>
+    </tr>
+{{end}}
