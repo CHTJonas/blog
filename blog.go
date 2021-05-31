@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"time"
 
+	"github.com/dgraph-io/badger"
 	"github.com/gorilla/feeds"
 )
 
@@ -14,6 +15,7 @@ type Blog struct {
 	OwnerName   string
 	OwnerEmail  string
 	YearCreated int
+	database    *badger.DB
 }
 
 func (b *Blog) Serve(addr string) (*Server, error) {
