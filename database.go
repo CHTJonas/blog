@@ -1,6 +1,9 @@
 package blog
 
 import (
+	"bytes"
+	"encoding/gob"
+
 	"github.com/dgraph-io/badger"
 )
 
@@ -18,43 +21,56 @@ func (b *Blog) CloseDB() {
 	b.database.Close()
 }
 
-func (b *Blog) Read(key string) ([]byte, error) {
-	var data []byte
+func (b *Blog) LoadPost(slug string) (*Post, error) {
+	var post Post
 	outerErr := b.database.View(func(txn *badger.Txn) error {
-		item, innerErr := txn.Get([]byte(key))
+		key := []byte("posts/" + slug)
+		item, innerErr := txn.Get(key)
 		if innerErr != nil {
 			return innerErr
 		}
-		return item.Value(func(val []byte) error {
-			data = append([]byte{}, val...)
-			return nil
+		return item.Value(func(data []byte) error {
+			buf := bytes.NewBuffer(data)
+			dec := gob.NewDecoder(buf)
+			return dec.Decode(&post)
 		})
 	})
-	return data, outerErr
+	return &post, outerErr
 }
 
-func (b *Blog) Write(key string, data []byte) error {
+func (b *Blog) SavePost(slug string, post *Post) error {
 	return b.database.Update(func(txn *badger.Txn) error {
-		return txn.Set([]byte(key), data)
+		var buf bytes.Buffer
+		enc := gob.NewEncoder(&buf)
+		err := enc.Encode(post)
+		if err != nil {
+			return err
+		}
+		key := []byte("posts/" + slug)
+		return txn.Set(key, buf.Bytes())
 	})
 }
 
-func (b *Blog) Scan() (map[string][]byte, error) {
-	var data map[string][]byte
-	err := b.database.View(func(txn *badger.Txn) error {
+func (b *Blog) ListPosts() (*map[string]*Post, error) {
+	var posts map[string]*Post
+	outerErr := b.database.View(func(txn *badger.Txn) error {
 		it := txn.NewIterator(badger.DefaultIteratorOptions)
 		defer it.Close()
 		prefix := []byte("posts/")
 		for it.Seek(prefix); it.ValidForPrefix(prefix); it.Next() {
+			var post Post
 			item := it.Item()
-			k := item.Key()
-			v, innerErr := item.ValueCopy(nil)
-			if innerErr != nil {
+			slug := string(item.Key())
+			if innerErr := item.Value(func(data []byte) error {
+				buf := bytes.NewBuffer(data)
+				dec := gob.NewDecoder(buf)
+				return dec.Decode(&post)
+			}); innerErr != nil {
 				return innerErr
 			}
-			data[string(k)] = v
+			posts[slug] = &post
 		}
 		return nil
 	})
-	return data, err
+	return &posts, outerErr
 }
