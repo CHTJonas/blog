@@ -52,7 +52,7 @@ func (b *Blog) SavePost(slug string, post *Post) error {
 }
 
 func (b *Blog) ListPosts() (*map[string]*Post, error) {
-	var posts map[string]*Post
+	posts := make(map[string]*Post)
 	outerErr := b.database.View(func(txn *badger.Txn) error {
 		it := txn.NewIterator(badger.DefaultIteratorOptions)
 		defer it.Close()

@@ -14,5 +14,8 @@ var CHTJonasBlog = &blog.Blog{
 }
 
 func main() {
+	CHTJonasBlog.OpenDB("db")
+	defer CHTJonasBlog.CloseDB()
+	CHTJonasBlog.SeedPosts()
 	CHTJonasBlog.Serve("localhost:8182")
 }
