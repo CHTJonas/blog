@@ -15,21 +15,26 @@ func (b *Blog) GetRSS() (string, error) {
 		Created:     time.Now().UTC(),
 		Copyright:   b.GetCopyright(),
 	}
-	posts := b.GetPosts()
-	feed.Items = make([]*feeds.Item, len(posts))
-	for i, p := range posts {
+	posts, err := b.ListPosts()
+	if err != nil {
+		return "", err
+	}
+	feed.Items = make([]*feeds.Item, len(*posts))
+	i := 0
+	for slug, p := range *posts {
 		if p.Draft {
 			continue
 		}
 		feed.Items[i] = &feeds.Item{
 			Id:      p.UUID,
 			Title:   p.Title,
-			Link:    p.GetLink(),
+			Link:    p.GetLink(slug),
 			Created: p.Created,
 			Updated: p.Updated,
 			Author:  p.GetAuthor(),
 			Content: p.GetHTML(),
 		}
+		i++
 	}
 	return feed.ToRss()
 }

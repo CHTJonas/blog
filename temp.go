@@ -3,10 +3,10 @@ package blog
 // This file to be deleted once development is finished.
 
 func (b *Blog) SeedPosts() {
-	b.SavePost("test-one", NewPost("First Test", "test-one", "This is the first test."))
-	b.SavePost("test-two", NewPost("Second Test", "test-two", "This is the second test."))
-	b.SavePost("test-three", NewPost("Third Test", "test-three", "This is the third test."))
-	b.SavePost("test-md", NewPost("Markdown Test", "test-md", markdown))
+	b.SavePost("test-one", NewPost("First Test", "This is the first test."))
+	b.SavePost("test-two", NewPost("Second Test", "This is the second test."))
+	b.SavePost("test-three", NewPost("Third Test", "This is the third test."))
+	b.SavePost("test-md", NewPost("Markdown Test", markdown))
 }
 
 const markdown = `## Section 1

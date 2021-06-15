@@ -48,10 +48,13 @@ func (serv *Server) index(w http.ResponseWriter, r *http.Request) {
 	if err != nil {
 		panic(err)
 	}
-	data := serv.getTemplateData()
-	data.ContentData = serv.b.GetPosts()
-	err = t.Execute(w, data)
+	posts, err := serv.b.ListPosts()
 	if err != nil {
+		panic(err)
+	}
+	data := serv.getTemplateData()
+	data.ContentData = posts
+	if err = t.Execute(w, data); err != nil {
 		panic(err)
 	}
 }
@@ -88,15 +91,14 @@ func (serv *Server) show(w http.ResponseWriter, r *http.Request) {
 	if err != nil {
 		panic(err)
 	}
-	for _, p := range serv.b.GetPosts() {
-		if p.Slug == slug {
-			data := serv.getTemplateData()
-			data.ContentData = p
-			err = t.Execute(w, data)
-			if err != nil {
-				panic(err)
-			}
-			return
-		}
+	post, err := serv.b.LoadPost(slug)
+	if err != nil {
+		panic(err)
+	}
+	data := serv.getTemplateData()
+	data.ContentData = post
+	err = t.Execute(w, data)
+	if err != nil {
+		panic(err)
 	}
 }

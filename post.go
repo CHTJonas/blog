@@ -12,7 +12,6 @@ import (
 type Post struct {
 	UUID        string
 	Title       string
-	Slug        string
 	Created     time.Time
 	Updated     time.Time
 	AuthorName  string
@@ -23,18 +22,17 @@ type Post struct {
 	NoIndex     bool
 }
 
-func NewDraft(title, slug, content string) *Post {
-	p := NewPost(title, slug, content)
+func NewDraft(title, content string) *Post {
+	p := NewPost(title, content)
 	p.Draft = true
 	return p
 }
 
-func NewPost(title, slug, content string) *Post {
+func NewPost(title, content string) *Post {
 	now := time.Now()
 	return &Post{
 		UUID:        uuid.New().String(),
 		Title:       title,
-		Slug:        slug,
 		Created:     now,
 		Updated:     now,
 		AuthorName:  "Charlie Jonas",
@@ -43,9 +41,9 @@ func NewPost(title, slug, content string) *Post {
 	}
 }
 
-func (p *Post) GetLink() *feeds.Link {
+func (p *Post) GetLink(slug string) *feeds.Link {
 	return &feeds.Link{
-		Href: fmt.Sprintf("https://blog.charliejonas.co.uk/post/%s", p.Slug),
+		Href: fmt.Sprintf("https://blog.charliejonas.co.uk/post/%s", slug),
 	}
 }
 

@@ -1,10 +1,10 @@
 {{define "content"}}
-    {{range .}}
+    {{range $key, $value := .}}
     <tr>
         <td>
-            <a href="/{{.Slug}}">{{.Title}}</a>
+            <a href="/{{$key}}">{{$value.Title}}</a>
             <br>
-            on {{.Created.Format "2006-01-02 15:04:05"}} by {{.AuthorName}}
+            on {{$value.Created.Format "2006-01-02 15:04:05"}} by {{$value.AuthorName}}
         </td>
     </tr>
     {{end}}

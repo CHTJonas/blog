@@ -45,18 +45,3 @@ func (b *Blog) GetCopyright() string {
 	}
 	return fmt.Sprintf("Copyright (c) %s %s", years, b.OwnerName)
 }
-
-// TODO remove this
-func (b *Blog) GetPosts() []*Post {
-	p := make([]*Post, 0, 20)
-	posts, err := b.ListPosts()
-	if err != nil {
-		fmt.Println(err)
-		return nil
-	}
-	for slug, post := range *posts {
-		post.Slug = slug
-		p = append(p, post)
-	}
-	return p
-}
