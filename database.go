@@ -3,9 +3,12 @@ package blog
 import (
 	"bytes"
 	"encoding/gob"
+	"strings"
 
 	"github.com/dgraph-io/badger"
 )
+
+const databasePrefix = "posts/"
 
 func (b *Blog) OpenDB(path string) error {
 	opts := badger.DefaultOptions(path)
@@ -24,7 +27,7 @@ func (b *Blog) CloseDB() {
 func (b *Blog) LoadPost(slug string) (*Post, error) {
 	var post Post
 	outerErr := b.database.View(func(txn *badger.Txn) error {
-		key := []byte("posts/" + slug)
+		key := []byte(databasePrefix + slug)
 		item, innerErr := txn.Get(key)
 		if innerErr != nil {
 			return innerErr
@@ -46,7 +49,7 @@ func (b *Blog) SavePost(slug string, post *Post) error {
 		if err != nil {
 			return err
 		}
-		key := []byte("posts/" + slug)
+		key := []byte(databasePrefix + slug)
 		return txn.Set(key, buf.Bytes())
 	})
 }
@@ -56,11 +59,11 @@ func (b *Blog) ListPosts() (*map[string]*Post, error) {
 	outerErr := b.database.View(func(txn *badger.Txn) error {
 		it := txn.NewIterator(badger.DefaultIteratorOptions)
 		defer it.Close()
-		prefix := []byte("posts/")
+		prefix := []byte(databasePrefix)
 		for it.Seek(prefix); it.ValidForPrefix(prefix); it.Next() {
 			var post Post
 			item := it.Item()
-			slug := string(item.Key())
+			slug := strings.TrimPrefix(string(item.Key()), databasePrefix)
 			if innerErr := item.Value(func(data []byte) error {
 				buf := bytes.NewBuffer(data)
 				dec := gob.NewDecoder(buf)
